@@ -3,7 +3,7 @@
 
 A simple and intuitive web-based car price prediction application built with HTML, CSS, and JavaScript.
 
-used a Direct Link to see Car Price Prediction ML Model - file:///C:/Users/subam/car-price-prediction-main/car_price_prediction.html 
+used a Direct Link to see Car Price Prediction ML Model - [file:///C:/Users/subam/car-price-prediction-main/car_price_prediction.html](https://car-price-prediction8055.netlify.app/) 
 
 Try this :) 
 
@@ -52,7 +52,7 @@ xdg-open car_price_prediction.html
 
 **Direct Link:**
 ```
-file:///C:/Users/subam/car-price-prediction-main/car_price_prediction.html
+[file:///C:/Users/subam/car-price-prediction-main/car_price_prediction.html](https://car-price-prediction8055.netlify.app/)
 ```
 
 ---
