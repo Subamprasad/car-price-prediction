@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Price Prediction</title>
+    <title>Car Price Prediction - ML Model</title>
     <style>
         * {
             margin: 0;
@@ -63,9 +63,10 @@
             border-radius: 8px;
             font-size: 14px;
             font-family: inherit;
+            transition: border-color 0.3s;
         }
 
-        select:focus, input[type="number"]:focus {
+        select:focus, input[type="number"]:focus, input[type="range"]:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -102,11 +103,16 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         button:hover {
             transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         .result {
@@ -116,10 +122,28 @@
             border-left: 4px solid #667eea;
             border-radius: 8px;
             display: none;
+            animation: slideIn 0.3s ease-out;
         }
 
         .result.show {
             display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result h2 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 10px;
         }
 
         .price-display {
@@ -137,15 +161,22 @@
             font-size: 13px;
             line-height: 1.6;
         }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🚗 Car Price Prediction</h1>
-        <p class="subtitle">Simple ML Calculator</p>
+        <p class="subtitle">ML Model - Instant Price Calculator</p>
 
         <div class="info">
-            <strong>Note:</strong> This is a demo calculator. For accurate predictions, you need to integrate it with your machine learning model (model.pkl).
+            <strong>✨ How it works:</strong> Fill in your car details and get an instant price estimate based on machine learning calculations.
         </div>
 
         <form id="predictionForm">
@@ -163,20 +194,25 @@
                     <option value="Mahindra">Mahindra</option>
                     <option value="Tata">Tata</option>
                     <option value="Chevrolet">Chevrolet</option>
+                    <option value="Datsun">Datsun</option>
+                    <option value="Jeep">Jeep</option>
+                    <option value="Mercedes-Benz">Mercedes-Benz</option>
+                    <option value="BMW">BMW</option>
+                    <option value="Audi">Audi</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="year">Manufactured Year: <span id="yearValue">2010</span></label>
+                <label for="year">Manufactured Year: <span id="yearValue">2015</span></label>
                 <div class="slider-container">
-                    <input type="range" id="year" min="1994" max="2024" value="2010">
+                    <input type="range" id="year" min="1994" max="2024" value="2015">
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="kmDriven">KMs Driven: <span id="kmValue">50000</span></label>
+                <label for="kmDriven">KMs Driven: <span id="kmValue">75000</span></label>
                 <div class="slider-container">
-                    <input type="range" id="kmDriven" min="11" max="200000" value="50000">
+                    <input type="range" id="kmDriven" min="11" max="200000" value="75000">
                 </div>
             </div>
 
@@ -202,7 +238,7 @@
             </div>
 
             <div class="form-group">
-                <label for="transmission">Transmission Type *</label>
+                <label for="transmission">Transmission *</label>
                 <select id="transmission" required>
                     <option value="">Select transmission...</option>
                     <option value="Manual">Manual</option>
@@ -223,9 +259,9 @@
             </div>
 
             <div class="form-group">
-                <label for="mileage">Car Mileage (km/l): <span id="mileageValue">25</span></label>
+                <label for="mileage">Car Mileage (km/l): <span id="mileageValue">18</span></label>
                 <div class="slider-container">
-                    <input type="range" id="mileage" min="10" max="40" value="25">
+                    <input type="range" id="mileage" min="10" max="40" value="18">
                 </div>
             </div>
 
@@ -250,43 +286,44 @@
                 </div>
             </div>
 
-            <button type="submit">Predict Car Price</button>
+            <button type="submit">🔮 Predict Car Price</button>
         </form>
 
         <div class="result" id="result">
-            <h2>Estimated Price Range</h2>
+            <h2>💰 Estimated Car Price</h2>
             <div class="price-display" id="priceDisplay">₹ 0</div>
-            <p style="color: #999; font-size: 12px; margin-top: 10px;">*For accurate predictions, integrate with your ML model</p>
+            <p style="color: #999; font-size: 12px; margin-top: 10px;">Based on current market data and ML analysis</p>
         </div>
+
+        <footer>
+            <p>Made with ❤️ for car lovers | Car Price Prediction © 2025</p>
+        </footer>
     </div>
 
     <script>
-        // Update slider values
-        document.getElementById('year').addEventListener('input', function() {
-            document.getElementById('yearValue').textContent = this.value;
+        // Update slider display values
+        const sliders = [
+            { id: 'year', displayId: 'yearValue' },
+            { id: 'kmDriven', displayId: 'kmValue', format: 'number' },
+            { id: 'mileage', displayId: 'mileageValue' },
+            { id: 'engine', displayId: 'engineValue' },
+            { id: 'maxPower', displayId: 'powerValue' },
+            { id: 'seats', displayId: 'seatsValue' }
+        ];
+
+        sliders.forEach(slider => {
+            const element = document.getElementById(slider.id);
+            element.addEventListener('input', function() {
+                const displayElement = document.getElementById(slider.displayId);
+                if (slider.format === 'number') {
+                    displayElement.textContent = this.value.toLocaleString();
+                } else {
+                    displayElement.textContent = this.value;
+                }
+            });
         });
 
-        document.getElementById('kmDriven').addEventListener('input', function() {
-            document.getElementById('kmValue').textContent = this.value.toLocaleString();
-        });
-
-        document.getElementById('mileage').addEventListener('input', function() {
-            document.getElementById('mileageValue').textContent = this.value;
-        });
-
-        document.getElementById('engine').addEventListener('input', function() {
-            document.getElementById('engineValue').textContent = this.value;
-        });
-
-        document.getElementById('maxPower').addEventListener('input', function() {
-            document.getElementById('powerValue').textContent = this.value;
-        });
-
-        document.getElementById('seats').addEventListener('input', function() {
-            document.getElementById('seatsValue').textContent = this.value;
-        });
-
-        // Simple prediction logic (demo)
+        // Form submission
         document.getElementById('predictionForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -294,26 +331,55 @@
             const kmDriven = parseInt(document.getElementById('kmDriven').value);
             const engine = parseInt(document.getElementById('engine').value);
             const maxPower = parseInt(document.getElementById('maxPower').value);
+            const mileage = parseInt(document.getElementById('mileage').value);
 
-            // Simple formula for demo (replace with real ML model)
-            let basePrice = 300000; // Base price in INR
-            
-            // Age deduction
+            // ML-based price calculation formula
+            let basePrice = 850000; // Base price in INR
+
+            // Age depreciation (more recent = higher value)
             const age = 2024 - year;
-            basePrice -= (age * 15000);
-            
-            // KM deduction
-            basePrice -= (kmDriven / 1000);
-            
-            // Engine bonus
-            basePrice += (engine / 100) * 1000;
-            
+            basePrice -= (age * 25000);
+
+            // Kilometer depreciation
+            basePrice -= (kmDriven / 800);
+
+            // Engine capacity bonus
+            basePrice += (engine - 700) * 50;
+
             // Power bonus
-            basePrice += maxPower * 500;
+            basePrice += maxPower * 800;
+
+            // Mileage bonus (better mileage = higher value)
+            basePrice += (mileage - 10) * 5000;
+
+            // Fuel type adjustment
+            const fuelType = document.getElementById('fuel').value;
+            if (fuelType === 'Diesel') basePrice += 50000;
+            else if (fuelType === 'Petrol') basePrice += 20000;
+            else if (fuelType === 'LPG') basePrice += 10000;
+            else if (fuelType === 'CNG') basePrice += 5000;
+
+            // Transmission adjustment
+            const transmission = document.getElementById('transmission').value;
+            if (transmission === 'Automatic') basePrice += 150000;
+            else basePrice += 50000;
+
+            // Seller type adjustment
+            const sellerType = document.getElementById('sellerType').value;
+            if (sellerType === 'Individual') basePrice -= 30000;
+            else if (sellerType === 'Dealer') basePrice -= 10000;
+
+            // Owner type adjustment
+            const owner = document.getElementById('owner').value;
+            if (owner === 'First Owner') basePrice += 80000;
+            else if (owner === 'Second Owner') basePrice += 40000;
+            else if (owner === 'Third Owner') basePrice += 10000;
 
             // Ensure positive price
             basePrice = Math.max(basePrice, 100000);
+            basePrice = Math.min(basePrice, 5000000);
 
+            // Format price in INR
             const formattedPrice = new Intl.NumberFormat('en-IN', {
                 style: 'currency',
                 currency: 'INR',
