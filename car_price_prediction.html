@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Prediction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        select, input[type="number"], input[type="range"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .slider-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+            padding: 0;
+            height: 6px;
+        }
+
+        .slider-value {
+            min-width: 70px;
+            text-align: right;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .price-display {
+            font-size: 32px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #0277bd;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Car Price Prediction</h1>
+        <p class="subtitle">Simple ML Calculator</p>
+
+        <div class="info">
+            <strong>Note:</strong> This is a demo calculator. For accurate predictions, you need to integrate it with your machine learning model (model.pkl).
+        </div>
+
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="carBrand">Car Brand *</label>
+                <select id="carBrand" required>
+                    <option value="">Select a brand...</option>
+                    <option value="Maruti">Maruti</option>
+                    <option value="Skoda">Skoda</option>
+                    <option value="Honda">Honda</option>
+                    <option value="Hyundai">Hyundai</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Ford">Ford</option>
+                    <option value="Renault">Renault</option>
+                    <option value="Mahindra">Mahindra</option>
+                    <option value="Tata">Tata</option>
+                    <option value="Chevrolet">Chevrolet</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="year">Manufactured Year: <span id="yearValue">2010</span></label>
+                <div class="slider-container">
+                    <input type="range" id="year" min="1994" max="2024" value="2010">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="kmDriven">KMs Driven: <span id="kmValue">50000</span></label>
+                <div class="slider-container">
+                    <input type="range" id="kmDriven" min="11" max="200000" value="50000">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="fuel">Fuel Type *</label>
+                <select id="fuel" required>
+                    <option value="">Select fuel type...</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="Petrol">Petrol</option>
+                    <option value="LPG">LPG</option>
+                    <option value="CNG">CNG</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sellerType">Seller Type *</label>
+                <select id="sellerType" required>
+                    <option value="">Select seller type...</option>
+                    <option value="Individual">Individual</option>
+                    <option value="Dealer">Dealer</option>
+                    <option value="Trustmark Dealer">Trustmark Dealer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="transmission">Transmission Type *</label>
+                <select id="transmission" required>
+                    <option value="">Select transmission...</option>
+                    <option value="Manual">Manual</option>
+                    <option value="Automatic">Automatic</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="owner">Owner Type *</label>
+                <select id="owner" required>
+                    <option value="">Select owner type...</option>
+                    <option value="First Owner">First Owner</option>
+                    <option value="Second Owner">Second Owner</option>
+                    <option value="Third Owner">Third Owner</option>
+                    <option value="Fourth & Above Owner">Fourth & Above Owner</option>
+                    <option value="Test Drive Car">Test Drive Car</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="mileage">Car Mileage (km/l): <span id="mileageValue">25</span></label>
+                <div class="slider-container">
+                    <input type="range" id="mileage" min="10" max="40" value="25">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="engine">Engine CC: <span id="engineValue">1500</span></label>
+                <div class="slider-container">
+                    <input type="range" id="engine" min="700" max="5000" value="1500">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="maxPower">Max Power (bhp): <span id="powerValue">100</span></label>
+                <div class="slider-container">
+                    <input type="range" id="maxPower" min="0" max="200" value="100">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="seats">No of Seats: <span id="seatsValue">5</span></label>
+                <div class="slider-container">
+                    <input type="range" id="seats" min="5" max="10" value="5">
+                </div>
+            </div>
+
+            <button type="submit">Predict Car Price</button>
+        </form>
+
+        <div class="result" id="result">
+            <h2>Estimated Price Range</h2>
+            <div class="price-display" id="priceDisplay">₹ 0</div>
+            <p style="color: #999; font-size: 12px; margin-top: 10px;">*For accurate predictions, integrate with your ML model</p>
+        </div>
+    </div>
+
+    <script>
+        // Update slider values
+        document.getElementById('year').addEventListener('input', function() {
+            document.getElementById('yearValue').textContent = this.value;
+        });
+
+        document.getElementById('kmDriven').addEventListener('input', function() {
+            document.getElementById('kmValue').textContent = this.value.toLocaleString();
+        });
+
+        document.getElementById('mileage').addEventListener('input', function() {
+            document.getElementById('mileageValue').textContent = this.value;
+        });
+
+        document.getElementById('engine').addEventListener('input', function() {
+            document.getElementById('engineValue').textContent = this.value;
+        });
+
+        document.getElementById('maxPower').addEventListener('input', function() {
+            document.getElementById('powerValue').textContent = this.value;
+        });
+
+        document.getElementById('seats').addEventListener('input', function() {
+            document.getElementById('seatsValue').textContent = this.value;
+        });
+
+        // Simple prediction logic (demo)
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const year = parseInt(document.getElementById('year').value);
+            const kmDriven = parseInt(document.getElementById('kmDriven').value);
+            const engine = parseInt(document.getElementById('engine').value);
+            const maxPower = parseInt(document.getElementById('maxPower').value);
+
+            // Simple formula for demo (replace with real ML model)
+            let basePrice = 300000; // Base price in INR
+            
+            // Age deduction
+            const age = 2024 - year;
+            basePrice -= (age * 15000);
+            
+            // KM deduction
+            basePrice -= (kmDriven / 1000);
+            
+            // Engine bonus
+            basePrice += (engine / 100) * 1000;
+            
+            // Power bonus
+            basePrice += maxPower * 500;
+
+            // Ensure positive price
+            basePrice = Math.max(basePrice, 100000);
+
+            const formattedPrice = new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0
+            }).format(basePrice);
+
+            document.getElementById('priceDisplay').textContent = formattedPrice;
+            document.getElementById('result').classList.add('show');
+        });
+    </script>
+</body>
+</html>
