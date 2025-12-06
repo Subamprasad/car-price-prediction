@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚗 Car Price Prediction ML Model
 
 A simple and intuitive web-based car price prediction application built with HTML, CSS, and JavaScript.
@@ -234,3 +235,7 @@ This project is open source and available for personal and educational use.
 **Happy Car Price Predicting! 🚗✨**
 
 Made with ❤️ for car enthusiasts and ML learners
+=======
+# car-price-prediction
+A machine learning project to predict car prices based on features like engine size, mileage, fuel type, transmission, and more. Built using Python and scikit-learn to help estimate car values accurately.
+>>>>>>> de01f217eaf657f1c2878e8acb5da60bf25724f0
